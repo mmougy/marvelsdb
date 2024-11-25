@@ -508,7 +508,11 @@ class CardsData
 			$fieldName = ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $fieldName)), '_');
 			$cardinfo[$fieldName] = $value;
 		}
-
+		
+		$isMainScheme = isset($cardinfo['type_code']) && $cardinfo['type_code'] == 'main_scheme';
+		$cardSide = $isMainScheme ? 'b' : 'a';
+		$cardBackSide = $isMainScheme ? 'a' : 'b';
+		
 		if ($locale && $api){
 			$cardinfo['url'] = $this->router->generate('cards_zoom', array('card_code' => $card->getCode(), '_locale' => $locale), UrlGeneratorInterface::ABSOLUTE_URL);
 			$cardinfo['url'] = str_replace("http://", "https://", $cardinfo['url']);
@@ -525,7 +529,7 @@ class CardsData
 			if(file_exists($imagepath)) {
 				$cardinfo['imagesrc'] = $imageurl;
 			} else {
-				$imageurl = $this->assets_helper->getUrl('bundles/cards/'.$card->getCode().'a.jpg');
+				$imageurl = $this->assets_helper->getUrl('bundles/cards/'.$card->getCode().$cardSide.'.jpg');
 				$imagepath= $this->rootDir . '/../web' . preg_replace('/\?.*/', '', $imageurl);
 				if(file_exists($imagepath)) {
 					$cardinfo['imagesrc'] = $imageurl;
@@ -543,12 +547,12 @@ class CardsData
 		}
 
 		if(isset($cardinfo['double_sided']) && $cardinfo['double_sided']) {
-			$imageurl = $this->assets_helper->getUrl('bundles/cards/'.$card->getCode().'b.png');
+			$imageurl = $this->assets_helper->getUrl('bundles/cards/'.$card->getCode().$cardBackSide.'.png');
 			$imagepath= $this->rootDir . '/../web' . preg_replace('/\?.*/', '', $imageurl);
 			if ( file_exists($imagepath)){
 				$cardinfo['backimagesrc'] = $imageurl;
 			}else {
-				$imageurl = $this->assets_helper->getUrl('bundles/cards/'.$card->getCode().'b.jpg');
+				$imageurl = $this->assets_helper->getUrl('bundles/cards/'.$card->getCode().$cardBackSide.'.jpg');
 				$imagepath= $this->rootDir . '/../web' . preg_replace('/\?.*/', '', $imageurl);
 				if ( file_exists($imagepath)){
 					$cardinfo['backimagesrc'] = $imageurl;
